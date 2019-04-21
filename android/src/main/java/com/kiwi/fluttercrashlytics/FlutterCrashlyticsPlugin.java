@@ -11,7 +11,9 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.PluginRegistry;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 public class FlutterCrashlyticsPlugin implements MethodChannel.MethodCallHandler {
@@ -49,7 +51,9 @@ public class FlutterCrashlyticsPlugin implements MethodChannel.MethodCallHandler
                     core.log(call.arguments.toString());
                 } else {
                     try {
-                        final List<Object> info = (List<Object>) call.arguments;
+                        final List<Object> info = info instanceof List
+                            ? (List<Object>) call.arguments
+                            : new ArrayList<Object>();
                         core.log(parseStringOrEmpty(info.get(0)) + ": " + info.get(1) + " " + info.get(2));
                     } catch (ClassCastException ex) {
                         Log.d("FlutterCrashlytics", "" + ex.getMessage());
@@ -84,7 +88,9 @@ public class FlutterCrashlyticsPlugin implements MethodChannel.MethodCallHandler
                 result.success(null);
                 break;
             case "reportCrash":
-                final Map<String, Object> exception = (Map<String, Object>) call.arguments;
+                final Map<String, Object> exception = call.arguments instanceof Map
+                    ? (Map<String, Object>) call.arguments
+                    : new HashMap<String, Object>();
                 final boolean forceCrash = tryParseForceCrash(exception.get("forceCrash"));
                 final FlutterException throwable = Utils.create(exception);
                 if (forceCrash) {

@@ -8,7 +8,9 @@ public class Utils {
 
     public static FlutterException create(Map<String, Object> exception) {
         final String message = (String) exception.get("message");
-        final List<Map<String, Object>> traces = (List<Map<String, Object>>) exception.get("trace");
+        final List<Map<String, Object>> traces = exception.get("trace") instanceof List
+            ? (List<Map<String, Object>>) exception.get("trace")
+            : new ArrayList<Map<String, Object>>();
 
         final FlutterException flutterException = new FlutterException(message);
         List<StackTraceElement> stackTraceElements = new ArrayList<>();
@@ -38,6 +40,5 @@ public class Utils {
         }
         return "";
     }
-
 
 }
